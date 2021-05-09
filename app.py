@@ -1,18 +1,25 @@
-from flask import Flask
-from datetime import datetime
+from flask import Flask, render_template
+
 app = Flask(__name__)
 
-@app.route('/')
-def homepage():
-    the_time = datetime.now().strftime("%A, %d %b %Y %l:%M %p")
+@app.route("/")
+def index():
+    
+    # Load current count
+    f = open("count.txt", "r")
+    count = int(f.read())
+    f.close()
 
-    return """
-    <h1>Hello heroku</h1>
-    <p>It is currently {time}.</p>
+    # Increment the count
+    count += 1
 
-    <img src="http://loremflickr.com/600/400" />
-    """.format(time=the_time)
+    # Overwrite the count
+    f = open("count.txt", "w")
+    f.write(str(count))
+    f.close()
 
-if __name__ == '__main__':
-    app.run(debug=True, use_reloader=True)
+    # Render HTML with count variable
+    return render_template("index.html", count=count)
 
+if __name__ == "__main__":
+    app.run(debug=True)
